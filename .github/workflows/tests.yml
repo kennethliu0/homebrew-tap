@@ -7,6 +7,18 @@ on:
   pull_request:
 
 jobs:
+  style:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: brew style --fix
+
   test-bot:
     strategy:
       matrix:
@@ -34,10 +46,6 @@ jobs:
       - run: brew test-bot --only-cleanup-before
 
       - run: brew test-bot --only-setup
-
-      - name: Style check
-        if: matrix.os == 'ubuntu-22.04'
-        run: brew style --fix
 
       - run: brew test-bot --only-tap-syntax
       - run: brew test-bot --only-formulae
